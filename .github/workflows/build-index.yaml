@@ -1,0 +1,105 @@
+name: Build index.json
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-index
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate index.json
+        run: |
+          python3 - <<'PY'
+          import json, os, time, hashlib, pathlib
+
+          base = pathlib.Path('.')
+          levels = base / 'levels'
+          thumbs_dir = base / 'media' / 'thumbs'
+
+          def sha256(path):
+            h = hashlib.sha256()
+            with open(path, 'rb') as f:
+              for chunk in iter(lambda: f.read(65536), b''):
+                h.update(chunk)
+            return 'sha256:' + h.hexdigest()
+
+          drawings = []
+          if levels.exists():
+            for p in levels.rglob('*.json'):
+              rel = p.relative_to(base).as_posix()
+              stem = p.stem
+              try:
+                with open(p, 'r', encoding='utf-8') as f:
+                  j = json.load(f)
+              except Exception as e:
+                print(f'::warning file={rel}::Skipping invalid JSON: {e}')
+                continue
+
+              # derive category from folder name under levels/
+              parts = p.relative_to(levels).parts
+              category = parts[0] if parts else 'Uncategorized'
+
+              item = {
+                'id': j.get('id', stem),
+                'name': j.get('name', stem),
+                'category': j.get('category', category),
+                'width': j.get('width'),
+                'height': j.get('height'),
+                'path': rel,
+                'checksum': sha256(p),
+              }
+
+              # optional fields: ignoredIndex, tags, thumb (only if file exists)
+              if 'ignoredIndex' in j and j['ignoredIndex'] is not None:
+                item['ignoredIndex'] = j['ignoredIndex']
+              tags = j.get('tags') or []
+              if isinstance(tags, list) and tags:
+                # normalize tags to lower-case strings
+                item['tags'] = [str(t).strip().lower() for t in tags if str(t).strip()]
+
+              thumb_path = thumbs_dir / f'{stem}.png'
+              if thumb_path.exists():
+                item['thumb'] = thumb_path.relative_to(base).as_posix()
+
+              # drop any Nones for cleanliness
+              item = {k:v for k,v in item.items() if v is not None}
+              drawings.append(item)
+
+          drawings.sort(key=lambda d: (d.get('category','').lower(), d.get('name','').lower()))
+          categories = sorted({d['category'] for d in drawings})
+
+          out = {
+            'version': 1,
+            'updatedAt': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+            'count': len(drawings),
+            'categories': categories,
+            'drawings': drawings,
+          }
+
+          with open('index.json', 'w', encoding='utf-8') as f:
+            json.dump(out, f, indent=2, ensure_ascii=False)
+            f.write('\n')
+          PY
+
+      - name: Commit index.json (only if changed)
+        run: |
+          if [[ -n "$(git status --porcelain index.json)" ]]; then
+            git config user.name "github-actions"
+            git config user.email "actions@github.com"
+            git add index.json
+            git commit -m "chore: update index.json"
+            git push
+          else
+            echo "No changes to index.json"
+          fi
