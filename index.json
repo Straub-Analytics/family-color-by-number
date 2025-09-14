@@ -1,9 +1,10 @@
 {
   "version": 1,
-  "updatedAt": "2025-09-14T15:48:16Z",
-  "count": 5,
+  "updatedAt": "2025-09-14T15:55:21Z",
+  "count": 6,
   "categories": [
     "Emojis",
+    "Names",
     "Princess",
     "Princesses",
     "Vehicles",
@@ -20,6 +21,17 @@
         "sunglasses",
         "smiley",
         "emoji"
+      ]
+    },
+    {
+      "id": "lennon",
+      "name": "Lennon",
+      "category": "Names",
+      "path": "levels/names/lennon.json",
+      "checksum": "sha256:beb3ca333cd4c4bfe6f09ad16ea702093a1036320c22fb4f7066a7143a9f67b3",
+      "tags": [
+        "name",
+        "lennon"
       ]
     },
     {
