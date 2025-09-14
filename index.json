@@ -1,14 +1,27 @@
 {
   "version": 1,
-  "updatedAt": "2025-09-12T14:41:42Z",
-  "count": 4,
+  "updatedAt": "2025-09-14T15:48:16Z",
+  "count": 5,
   "categories": [
+    "Emojis",
     "Princess",
     "Princesses",
     "Vehicles",
     "princesses"
   ],
   "drawings": [
+    {
+      "id": "shades-smiley",
+      "name": "Shades Smiley",
+      "category": "Emojis",
+      "path": "levels/emojis/shades-smiley.json",
+      "checksum": "sha256:e36aeecc4d6d5ea67453ffb8827af463f48c7fd37a46bb1edbeb55ef9e314681",
+      "tags": [
+        "sunglasses",
+        "smiley",
+        "emoji"
+      ]
+    },
     {
       "id": "new-drawing-1757372755169",
       "name": "Frozen Princesses",
