@@ -1,16 +1,29 @@
 {
   "version": 1,
-  "updatedAt": "2025-09-14T15:55:21Z",
-  "count": 6,
+  "updatedAt": "2025-09-14T16:22:05Z",
+  "count": 7,
   "categories": [
     "Emojis",
     "Names",
     "Princess",
     "Princesses",
     "Vehicles",
+    "emojis",
     "princesses"
   ],
   "drawings": [
+    {
+      "id": "happy-smiley",
+      "name": "Happy Smiley",
+      "category": "emojis",
+      "path": "levels/emojis/happy-smiley.json",
+      "checksum": "sha256:83cdf50c7cd961da0672a634ff2af8122babd2433852a41c76a2b0f72188a839",
+      "tags": [
+        "smiley",
+        "happy",
+        "emoji"
+      ]
+    },
     {
       "id": "shades-smiley",
       "name": "Shades Smiley",
